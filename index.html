@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#0c0d10" />
+  <title>三维户型漫游 · 演示 | 3D Home Tour Demo</title>
+  <meta name="description" content="三维户型漫游演示：在户型里自由走动，按真实天文算法查看一天的日照，切换白天夜晚。演示项目，非真实楼盘。" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="三维户型漫游 · 演示 | 3D Home Tour Demo" />
+  <meta property="og:description" content="在户型里自由走动、俯瞰全屋、查看一天的日照。演示项目，非真实楼盘。" />
+  <meta property="og:image" content="https://likecc616-dotcom.github.io/home-tour-demo/og.jpg" />
+  <meta property="og:url" content="https://likecc616-dotcom.github.io/home-tour-demo/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%277%27 fill=%27%230c0d10%27/%3E%3Cpath d=%27M7 16 16 8l9 8v9H7z%27 fill=%27none%27 stroke=%27%23ef7d57%27 stroke-width=%272.4%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="style.css" />
+  <script>
+    // boot: choose quality + internal render size BEFORE the engine modules load (they size their render targets from __RES)
+    (function () {
+      var qs = new URLSearchParams(location.search), q = qs.get('q'), stored = null;
+      try { stored = sessionStorage.getItem('demo.q'); } catch (e) {}
+      var ua = navigator.userAgent, mobile = /Android|iPhone|iPad|iPod|Mobile/i.test(ua) || (navigator.maxTouchPoints > 1 && /Macintosh/.test(ua));
+      q = q || stored || (mobile ? 'low' : 'high');
+      if (['high', 'mid', 'low'].indexOf(q) < 0) q = 'high';
+      var budget = q === 'high' ? 2.07e6 : q === 'mid' ? 1.25e6 : 0.62e6;
+      var vw = Math.max(320, innerWidth), vh = Math.max(320, innerHeight), dpr = Math.min(devicePixelRatio || 1, 2), a = vw / vh;
+      var w = Math.sqrt(budget * a), h = w / a, k = Math.min(1, vw * dpr / w, vh * dpr / h);
+      w = Math.round(w * k / 2) * 2; h = Math.round(h * k / 2) * 2;
+      window.__RES = [w, h];
+      window.__Q = { name: q, shadow: q === 'low' ? 2048 : 4096, mobile: mobile };
+      window.__Lprof = q === 'low' ? { ao: false, shaft: false, dust: false, refl: false } : q === 'mid' ? { shaft: false, refl: false, dust: false } : { dust: false };
+    })();
+  </script>
+</head>
+<body>
+  <canvas id="gl"></canvas>
+  <div id="ui"></div>
+  <div id="loading">
+    <div class="ld-box">
+      <div class="ld-title">三维户型漫游 · 3D Home Tour</div>
+      <div class="ld-bar"><div id="loadbar"></div></div>
+      <div id="loadmsg" data-k="load">正在加载… Loading…</div>
+      <div class="ld-note">演示项目 · 非真实楼盘 &nbsp;|&nbsp; Demo project · not a real development</div>
+    </div>
+  </div>
+  <noscript><p style="color:#fff;padding:24px">需要开启 JavaScript · JavaScript is required.</p></noscript>
+  <script type="module" src="app.js"></script>
+  <script>
+    // WebGL 2 missing → say so instead of a blank page
+    (function () { var c = document.createElement('canvas'); if (!c.getContext('webgl2')) { var m = document.getElementById('loadmsg'); if (m) m.textContent = '这个浏览器不支持 WebGL 2，请换用最新版 Chrome / Safari / Edge。 This browser does not support WebGL 2.'; } })();
+    window.addEventListener('error', function (e) { var m = document.getElementById('loadmsg'); if (m && !window.__ready) m.textContent = '加载出错，请刷新重试 · Something went wrong, please reload.'; });
+  </script>
+</body>
+</html>
